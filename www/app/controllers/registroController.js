@@ -2,20 +2,18 @@
 angular.module('app.controllers')
 .controller('RegistroCtrl', function($scope,$location,$ionicModal,$ionicLoading,$ionicPopup, RegistroService,NotificaService) {
 	
-    $scope.data={Filtro:"",Dia: new Date().toLocaleDateString()};
-//    $scope.data={};
+    $scope.data={Filtro:"",Dia: moment()};
     
     var pis = localStorage.getItem("pis")
     $scope.$watch("data.Filtro",function(nValue,oValue){
         if(nValue)
         if(nValue.indexOf('-')>=0){
                 var data  = nValue.split('-');
-                $scope.data.Dia = data[2]+'/'+data[1]+'/'+data[0];
+                $scope.data.Dia = moment(data[2]+'/'+data[1]+'/'+data[0], ["DD/MM/YYYY"]);
             }
             else{
                 $scope.data.Dia = oValue;
-            }
-        
+            }        
     });
     
     
@@ -26,12 +24,11 @@ angular.module('app.controllers')
         
         $scope.showAlert("Informe seu PIS no menu de Configurações");
         $location.path("/tab/configuracoes");
-        localStorage.setItem("redirected",true);
         return;
     }
     $scope.Filtrar = function(){
         $scope.lancamentos = [];
-        $scope.closeModal();
+        $scope.closeFiltro();
         var dia = $scope.data.Filtro;
        
         if(dia && dia!== new Date().toLocaleDateString()){            
@@ -41,10 +38,9 @@ angular.module('app.controllers')
             RegistroService.getRegistrosFiltro(pis,dia).success(function(data){
               var array = data;
               var result = array.map(function(item, rank){
-                            return {sentido: (rank % 2) == 0 ? "Entrada" : "Saída",
-                                    data: moment(item.DtRegistro,"DD/MM/YYYY HH:mm:ss"),  
-                                    hora: moment(item.DtRegistro,"DD/MM/YYYY HH:mm:ss").format("HH:mm")};                          
-                            });
+                            return {sentido: (rank % 2) == 0 ? "Entrada" : "Saída",                                 
+                                    hora: moment(item.DtRegistro,"DD/MM/YYYY HH:mm:ss")
+                                   };});
               $scope.lancamentos = result;
               $ionicLoading.hide();
             }).error(function(erro){$scope.showAlert("Ocorreu um Erro!");});
@@ -63,14 +59,14 @@ angular.module('app.controllers')
                     var result = array.map(function(item, rank){
                         return {
                                 sentido: (rank % 2) == 0 ? "Entrada" : "Saída",
-                                hora: item.DtRegistro.slice(11,16) 
+                                hora: moment(item.DtRegistro,"DD/MM/YYYY HH:mm:ss")
                                 };                          
                             });                    
                     $scope.lancamentos = [];
-                    $scope.data={Dia: new Date().toLocaleDateString()};
+                    $scope.data={Dia: momment()};
                     $scope.lancamentos = result;
                     $ionicLoading.hide();                  
-                }).error(function(err){NotificaService.addNotification(11,"Batidas de hoje solicitadas.","Ação");});
+                });
     }
     
     $scope.TesteNotifica = function(){
@@ -81,13 +77,13 @@ angular.module('app.controllers')
         scope: $scope,
         animation: 'slide-in-up'
       }).then(function(modal) {
-        $scope.modal = modal;
+        $scope.filtroWindow = modal;
          modal.height= 30;
       });
-      $scope.openModal = function() {
-        $scope.modal.show();
+      $scope.openFiltro = function() {
+        $scope.filtroWindow.show();
       };
-      $scope.closeModal = function() {
-        $scope.modal.hide();
+      $scope.closeFiltro = function() {
+        $scope.filtroWindow.hide();
       };    
 })

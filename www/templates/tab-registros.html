@@ -1,12 +1,13 @@
 <ion-view hide-nav-bar=true >
     
     <div class="bar bar-header bar-assertive">
-        <h1 class="title">Registros</h1>    
+        <h1 class="title">Registros</h1><button  ng-click="" class="button button-icon icon icon-right ion-plus"title="Adcionar Batida manual."></button>
+        
     </div>  
     <ion-content padding=true style="margin-top:50px;"> 
 
     <div class="item item-divider">
-  	<button  ng-click="openModal()" class="button  button-full button-icon icon icon-right ion-calendar"><h1>{{data.Dia}} </h1> </button>
+  	<button  ng-click="openFiltro()" class="button  button-full button-icon icon icon-right ion-calendar"><h1>{{data.Dia.format("DD/MM/YYYY")}} </h1> </button>
 	</div>		
     <ion-list>
       <ion-item ng-repeat="l in lancamentos" type="item-text-wrap">
@@ -15,17 +16,14 @@
             {{l.sentido}}
           </div>
           <div class="col col-20" >
-            {{l.hora}}  
+            {{l.hora.format("HH:mm")}}  
           </div>                
         </div>        
       </ion-item>
     </ion-list>
       <button class="button button-full button-assertive" ng-click="BatidasDeHoje()">
             Batidas De Hoje
-      </button>
-        <button class="button button-full button-assertive" ng-click="TesteNotifica()">
-            Teste Notificação
-      </button>
+      </button>      
   </ion-content>
 </ion-view>
 
@@ -33,7 +31,7 @@
   <ion-modal-view>
     <ion-header-bar class="bar bar-header bar-assertive">
       <h1 class="title">Filtrar Data</h1>
-      <div class="button button-clear" ng-click="closeModal()"><span class="icon ion-close"></span></div>
+      <div class="button button-clear" ng-click="closeFiltro()"><span class="icon ion-close"></span></div>
     </ion-header-bar>
     <ion-content  padding=true>
       <label class="item item-input">
@@ -46,16 +44,4 @@
       
     </ion-content>
   </ion-modal-view>
-</script>
-
-<script id="attention.html" type="text/ng-template">
-  <ion-view>
-    <ion-header-bar class="bar bar-header bar-assertive">
-      <h1 class="title">Atenção</h1>
-      <div class="button button-clear" ng-click="closeModal()"><span class="icon ion-close"></span></div>
-    </ion-header-bar>
-    <ion-content  padding=true>
-      <p>{{msg}}</p>
-    </ion-content>
-  </ion-view>
 </script>
